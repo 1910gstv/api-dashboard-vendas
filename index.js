@@ -6,12 +6,14 @@ const connection = require("./database/database");
 const cors = require('cors');
 
 const userController = require('./routes/usersRoutes')
+const produtoController = require('./routes/produtosRoutes')
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.use('/', userController)
+app.use('/', produtoController)
 
 app.use(session({
     secret: "paocomcafe",
