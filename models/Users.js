@@ -12,4 +12,8 @@ const User = connection.define("tb_usuarios", {
   },
 });
 
+User.associate = (models) => {
+  User.belongsTo(models.Pedido, {foreignKey: 'id_usuario'})
+}
+
 module.exports = User;

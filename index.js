@@ -7,6 +7,7 @@ const cors = require('cors');
 
 const userController = require('./routes/usersRoutes')
 const produtoController = require('./routes/produtosRoutes')
+const pedidoController = require('./routes/pedidosRoutes')
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -14,6 +15,7 @@ app.use(bodyParser.json());
 
 app.use('/', userController)
 app.use('/', produtoController)
+app.use('/', pedidoController)
 
 app.use(session({
     secret: "paocomcafe",
