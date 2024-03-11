@@ -28,7 +28,7 @@ const Pedido = connection.define('tb_pedidos', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    status : {
+    statusPedidos : {
         type: Sequelize.INTEGER,
         allowNull: false
     } 
