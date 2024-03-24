@@ -1,8 +1,15 @@
-const { Router } = require('express');
-const { authenticate } = require ('../controllers/UserControllers');
+const { Router } = require("express");
+const { authenticate, getAllUsers } = require("../controllers/UserControllers");
+const { auth } = require("../middleware/AuthController");
+const cors = require("cors");
+const express = require('express');
+const app = express();
 
 const router = Router();
 
-router.post('/authenticate', authenticate)
+app.use(cors());
 
-module.exports = router
+router.post("/authenticate", auth, authenticate);
+router.get("/users", auth, getAllUsers);
+
+module.exports = router;

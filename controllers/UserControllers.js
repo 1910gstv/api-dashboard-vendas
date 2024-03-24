@@ -3,70 +3,50 @@ const router = express.Router();
 const User = require("../models/Users");
 const bcrypt = require("bcryptjs");
 const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
+const Token = require("../middleware/AuthController");
 
-// router.get("/users", (req, res) => {
-//   User.findAll({ raw: true }).then((users) => {
-//     res.json(users);
-//   });
-// });
+function getAllUsers(req, res) {
+  User.findAll().then((users) => {
+    res.json([{ "Usuário Logado": req.loggedUser.login }, users]);
+  });
+}
 
-// router.post("/authenticate", (req, res) => {
-//   //Autenticar com JWT
-//   var login = req.body.login;
-//   var password = req.body.senha;
-//   var autenticado;
+function authenticate(req, res) {
+  var login = req.body.login;
+  var password = req.body.senha;
+  const JWTSecret = Token.JWTToken.JWTSecret;
 
-//   User.findOne({
-//     where: {
-//       login: login,
-//     },
-//   }).then(user => {
-//     if(user != undefined){
-//         if(user.senha == password) {
-//             autenticado = true;
-//             res.json({user: user , autenticado: autenticado})
-//         } else {
-//             autenticado = false;
-//             res.json({user: user, autenticado: autenticado})
-//         } 
-//     } else {
-//         autenticado = false;
-//         res.json({user: user, autenticado: autenticado})
-//     }
-//   }).catch((err) => {
-//     res.send(err)
-//   })
-// });
-
-
-    function authenticate (req, res) {
-        var login = req.body.login;
-       var password = req.body.senha;
-       var autenticado;
-    
-       User.findOne({
-         where: {
-           login: login,
-         },
-       }).then(user => {
-         if(user != undefined){
-             if(user.senha == password) {
-                 autenticado = true;
-                 res.json({user: user , autenticado: autenticado})
-             } else {
-                 autenticado = false;
-                 res.json({user: user, autenticado: autenticado})
-             } 
-         } else {
-             autenticado = false;
-             res.json({user: user, autenticado: autenticado})
-         }
-       }).catch((err) => {
-         res.send(err)
+  User.findOne({
+    where: {
+      login: login,
+      senha: password,
+    },
+  })
+    .then((user) => {
+      if (user != undefined) {
+        if (user.senha == password) {
+          jwt.sign(
+            { id: user.id, login: user.login },
+            JWTSecret,
+            { expiresIn: "48h" },
+            (err, token) => {
+              if (err) {
+                res.status(400);
+                res.send("Falha!");
+              } else {
+                return res.status(200).json({ token: token });
+              }
+            }
+          );
+        }
+      } else {
+        return res.status(400).json({ ERRO: "O usuário não está autenticado" });
+      }
     })
-  }
+    .catch(() => {
+      return res.status(400).json({ ERRO: "O usuário não está autenticado" });
+    });
+}
 
-
-
-
-module.exports = { authenticate };
+module.exports = { authenticate, getAllUsers };
