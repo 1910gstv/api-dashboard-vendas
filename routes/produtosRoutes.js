@@ -4,7 +4,7 @@ const {
   getAllProducts,
   getProductById,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 } = require("../controllers/ProdutoController");
 
 const router = Router();
